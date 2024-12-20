@@ -8,14 +8,39 @@ PAGE_SIZE = 1050  # максимальное количество букв дл�
 book: dict[int, str] = {}
 
 
-def _get_part_text(text: str, start: int, size: int) -> tuple[str, int]:
+def _get_part_text(text: str, start: int, page_size: int) -> tuple[str, int]:
     """Функция возвращает строку с текстом страницы и её размер."""
-    pass
+    punctuation = ',.!;:?'
+    if len(text[start:]) > page_size:
+        curr_text = text[start:start + page_size]
+        if text[start + page_size] in punctuation:
+            curr_text = (curr_text[:-1]
+                         if curr_text[-2] not in punctuation
+                         else curr_text[:-2])
+    else:
+        curr_text = text[start:]
+    for i, el in enumerate(curr_text[::-1], -len(curr_text)):
+        if el in punctuation:
+            result_text = curr_text[:-i]
+            break
+    return result_text, len(result_text)
 
 
 def prepare_book(path: str) -> None:
     """Функция формирует словарь книги"""
-    pass
+    def prepare_book(path: str) -> None:
+        with open(path, 'r', encoding='utf-8') as file:
+            text = file.read()
+            count = 1
+            start = 0
+            while start < len(text):
+                current_page, len_page = _get_part_text(text, start, PAGE_SIZE)
+                if current_page:
+                    book[count] = current_page.lstrip(" \t\n")
+                    count += 1
+                    start += len_page
+                else:
+                    break
 
 
 # Вызов функции prepare_book для подготовки книги из текстового файла
