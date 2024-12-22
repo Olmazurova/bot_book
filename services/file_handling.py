@@ -2,7 +2,7 @@ import os
 import sys
 
 
-BOOK_PATH = 'book/book.txt'  # путь к файлу книги
+BOOK_PATH = 'book/Bredberi_Marsianskie-hroniki.txt'  # путь к файлу книги
 PAGE_SIZE = 1050  # максимальное количество букв для одной страницы
 
 book: dict[int, str] = {}
@@ -11,6 +11,7 @@ book: dict[int, str] = {}
 def _get_part_text(text: str, start: int, page_size: int) -> tuple[str, int]:
     """Функция возвращает строку с текстом страницы и её размер."""
     punctuation = ',.!;:?'
+    result_text = ''
     if len(text[start:]) > page_size:
         curr_text = text[start:start + page_size]
         if text[start + page_size] in punctuation:
@@ -28,19 +29,18 @@ def _get_part_text(text: str, start: int, page_size: int) -> tuple[str, int]:
 
 def prepare_book(path: str) -> None:
     """Функция формирует словарь книги"""
-    def prepare_book(path: str) -> None:
-        with open(path, 'r', encoding='utf-8') as file:
-            text = file.read()
-            count = 1
-            start = 0
-            while start < len(text):
-                current_page, len_page = _get_part_text(text, start, PAGE_SIZE)
-                if current_page:
-                    book[count] = current_page.lstrip(" \t\n")
-                    count += 1
-                    start += len_page
-                else:
-                    break
+    with open(path, 'r', encoding='utf-8') as file:
+        text = file.read()
+        count = 1
+        start = 0
+        while start < len(text):
+            current_page, len_page = _get_part_text(text, start, PAGE_SIZE)
+            if current_page:
+                book[count] = current_page.lstrip(" \t\n")
+                count += 1
+                start += len_page
+            else:
+                break
 
 
 # Вызов функции prepare_book для подготовки книги из текстового файла

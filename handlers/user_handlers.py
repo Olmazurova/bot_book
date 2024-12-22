@@ -23,7 +23,7 @@ async def process_command_start(message: Message):
     """
     await message.answer(LEXICON[message.text])
     if message.from_user.id not in users_db:
-        users_db[message.from_user.id] = deepcopy[user_dict_template]
+        users_db[message.from_user.id] = deepcopy(user_dict_template)
 
 
 @router.message(Command(commands='help'))
@@ -119,7 +119,7 @@ async def process_press_backward(callback: CallbackQuery):
 
 
 @router.callback_query(lambda x: '/' in x.data 
-                       and x.data.repalce('/', '').isdidgit())
+                       and x.data.replace('/', '').isdigit())
 async def process_press_page(callback: CallbackQuery):
     """Хендлер, добавляющий закладку в список закладок."""
     users_db[callback.from_user.id]['bookmarks'].add(
