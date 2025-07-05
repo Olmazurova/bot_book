@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery, Message
 from aiogram_dialog import DialogManager, StartMode
 
 from database.database import user_dict_template, users_db
-from dialog.states import StartSG
+from dialog.states import StartSG, BookmarksSG
 from filters.filters import IsDelBookmarkCallbackData, IsDigitalCallbackData
 from keyboards.bookmarks_kb import (create_bookmarks_keyboard,
                                     create_edit_keyboard)
@@ -30,62 +30,38 @@ async def process_command_start(message: Message, dialog_manager: DialogManager)
     await dialog_manager.start(state=StartSG.start, mode=StartMode.RESET_STACK)
 
 
-# @router.message(Command(commands='help'))
-# async def process_command_help(message: Message):
-#     """Хендлер, срабатывающий на команду /help.
-#     Отправляет пользователю сообщение со списком всех команд бота.
-#     """
-#     await message.answer(LEXICON[message.text])
+@user_router.message(Command(commands='help'))
+async def process_command_help(message: Message, dialog_manager: DialogManager):
+    """Хендлер, срабатывающий на команду /help.
+    Отправляет пользователю сообщение со списком всех команд бота.
+    """
+    await dialog_manager.start(state=StartSG.descript, mode=StartMode.RESET_STACK)
 
 
 @user_router.message(Command(commands='beginning'))
-async def process_command_beginning(message: Message):
+async def process_command_beginning(message: Message, dialog_manager: DialogManager):
     """Хендлер, срабатывающий на команду /beginning.
     Отправляет пользователю первую страницу книги с кнопками пагинации.
     """
     users_db[message.from_user.id]['page'] = 1  # назначаем текущей страницей первую
-    text = book[users_db[message.from_user.id]['page']] # получаем текст страницы
-    await message.answer(
-        text=text,
-        reply_markup=create_pagination_keyboard(
-            'backward',
-            f'{users_db[message.from_user.id]["page"]}/{len(book)}',
-            'forward'
-        )
-    )
+    await dialog_manager.start(state=StartSG.read, mode=StartMode.RESET_STACK)
 
 
-# @router.message(Command(commands='continue'))
-# async def process_command_continue(message: Message):
-#     """Хендлер, срабатывающий на команду /continue.
-#     Отправляет пользователю страницу книги, на которой
-#     он остановился в процессе взаимодействия с ботом."""
-#     text = book[users_db[message.from_user.id]['page']] # получаем текст страницы
-#     await message.answer(
-#         text=text,
-#         reply_markup=create_pagination_keyboard(
-#             'backward',
-#             f'{users_db[message.from_user.id]["page"]}/{len(book)}',
-#             'forward'
-#         )
-#     )
+@user_router.message(Command(commands='continue'))
+async def process_command_continue(message: Message, dialog_manager: DialogManager):
+    """Хендлер, срабатывающий на команду /continue.
+    Отправляет пользователю страницу книги, на которой
+    он остановился в процессе взаимодействия с ботом."""
+    await dialog_manager.start(state=StartSG.read, mode=StartMode.RESET_STACK)
 
 
-# @router.message(Command(commands='bookmarks'))
-# async def process_command_bookmarks(message: Message):
-#     """Хендлер, срабатывающий на команду /bookmarks.
-#     Отправляет пользователю список закладое, если он есть,
-#     или сообщение о том, что закладок нет.
-#     """
-#     if users_db[message.from_user.id]['bookmarks']:
-#         await message.answer(
-#             text=LEXICON[message.text],
-#             reply_markup=create_bookmarks_keyboard(
-#                 *users_db[message.from_user.id]['bookmarks']
-#             )
-#         )
-#     else:
-#         await message.answer(text=LEXICON['no_bookmarks'])
+@user_router.message(Command(commands='bookmarks'))
+async def process_command_bookmarks(message: Message,  dialog_manager: DialogManager):
+    """Хендлер, срабатывающий на команду /bookmarks.
+    Отправляет пользователю список закладое, если он есть,
+    или сообщение о том, что закладок нет.
+    """
+    await dialog_manager.start(state=BookmarksSG.bookmarks)
 
 
 # @router.callback_query(F.data == 'forward')
