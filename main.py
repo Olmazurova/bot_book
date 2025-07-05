@@ -12,13 +12,11 @@ from dialog.dialogs import start_dialog, bookmarks_dialog
 from handlers import other_handlers, user_handlers
 from keyboards.main_menu import set_main_menu
 
-
 logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    '''Функция настройки(конфигурирования) и запуска бота.'''
-
+    """Функция настройки(конфигурирования) и запуска бота."""
     logging.basicConfig(
         level=logging.INFO,
         format='%(filename)s:%(lineno)d #%(levelname)-8s '
@@ -44,4 +42,5 @@ async def main() -> None:
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
-asyncio.run(main())
+if __name__ == '__main__':
+    asyncio.run(main())
