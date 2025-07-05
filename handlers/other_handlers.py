@@ -2,10 +2,10 @@ from aiogram import Router
 from aiogram.types import Message
 
 
-router = Router()
+other_router = Router()
 
 
-@router.message()
+@other_router.message()
 async def send_unknown_command(message: Message):
     """Хендлер будет срабатывать на все сообщения,
     не отловленные другими хендлерами."""

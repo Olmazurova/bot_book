@@ -5,6 +5,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram_dialog import setup_dialogs
 
 from config_data.config import Config, load_config
 from dialog.dialogs import start_dialog, bookmarks_dialog
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    '''Функция настройки(конфигурирования) и запуска бота'''
+    '''Функция настройки(конфигурирования) и запуска бота.'''
 
     logging.basicConfig(
         level=logging.INFO,
@@ -34,8 +35,8 @@ async def main() -> None:
     await set_main_menu(bot)
 
     # Регистрация диспетчеров
-    dp.include_router(user_handlers.router)
-    dp.include_router(other_handlers.router)
+    dp.include_router(user_handlers.user_router)
+    dp.include_router(other_handlers.other_router)
     dp.include_routers(start_dialog, bookmarks_dialog)
     setup_dialogs(dp)
 
